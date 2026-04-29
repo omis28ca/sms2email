@@ -4,7 +4,21 @@
       "Bash(npm outdated *)",
       "Bash(npm view *)",
       "Bash(git push *)",
-      "Bash(git remote *)"
+      "Bash(git remote *)",
+      "Bash(systemctl list-units *)",
+      "Bash(apt-cache show *)",
+      "Bash(dpkg -l nginx)",
+      "Bash(apt-get install *)",
+      "Bash(sudo apt-get *)",
+      "Bash(chmod +x *)",
+      "Bash(sudo ufw *)",
+      "Bash(su -c \"ufw status verbose\")",
+      "Bash(npm list *)",
+      "Bash(npm install *)",
+      "Bash(pm2 start *)",
+      "Bash(pm2 startup *)",
+      "Bash(pm2 save *)",
+      "Bash(pm2 status *)"
     ]
   }
 }

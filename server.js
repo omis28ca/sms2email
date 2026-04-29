@@ -14,9 +14,17 @@ const sms = require("./sms");
 
 const app = express();
 
+app.use(
+	express.json({
+		verify: (req, _res, buf) => {
+			req.rawBody = buf.toString("utf8");
+		},
+	})
+);
+
 const webhookValidator = async (req, res, next) => {
 	try {
-		await telnyx.webhooks.unwrap(JSON.stringify(req.body, null, 2), {
+		await telnyx.webhooks.unwrap(req.rawBody, {
 			headers: req.headers,
 		});
 		next();
@@ -26,9 +34,7 @@ const webhookValidator = async (req, res, next) => {
 	}
 };
 
-app.use(express.json());
-
-app.use("/sms", sms, webhookValidator);
+app.use("/sms", webhookValidator, sms);
 app.post("/message/callbacks/status", (req, res) => {
 	res.sendStatus(200);
 	const event = req.body.data;
