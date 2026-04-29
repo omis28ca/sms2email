@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm outdated *)",
+      "Bash(npm view *)",
+      "Bash(git push *)",
+      "Bash(git remote *)"
+    ]
+  }
+}
