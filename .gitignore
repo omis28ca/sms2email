@@ -105,3 +105,5 @@ dist
 
 # Other files
 package-lock.json
+/.idea/
+/.claude/

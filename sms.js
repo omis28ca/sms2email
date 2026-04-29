@@ -3,6 +3,7 @@ const nodemailer = require("nodemailer");
 const Mailjet = require("node-mailjet");
 const config = require("./config");
 const express = require("express");
+const logger = require("./logger");
 
 const router = (module.exports = express.Router());
 
@@ -10,14 +11,23 @@ const smsRouter = async (req, res) => {
 	res.sendStatus(200);
 	const event = req.body.data;
 
+	logger.info(`Webhook received: event_type="${event.event_type}" message_id="${event.payload?.id}"`);
+
 	switch (event.event_type) {
 		case "message.received":
+			logger.info(
+				`SMS received: from="${event.payload.from.phone_number}" ` +
+				`to="${event.payload.to?.[0]?.phone_number}" ` +
+				`received_at="${event.payload.received_at}" ` +
+				`body="${event.payload.text}"`
+			);
 			sendEmail(event);
 			break;
 		case "message.sent":
+			logger.info(`SMS sent confirmation: message_id="${event.payload?.id}"`);
 			break;
 		default:
-			console.log(event.event_type);
+			logger.warn(`Unhandled event type: "${event.event_type}"`);
 			break;
 	}
 };
@@ -30,11 +40,13 @@ const sendEmail = async (event) => {
 
 		if (config.MAILER_TYPE === "smtp") {
 			await sendViaSMTP(smsFrom, smsReceivedAt, smsBody);
+			logger.info(`Email sent via SMTP: to="${config.DESTINATION_MAILBOX}" from="${smsFrom}"`);
 		} else {
 			await sendViaMailjet(smsFrom, smsReceivedAt, smsBody);
+			logger.info(`Email sent via Mailjet: to="${config.DESTINATION_MAILBOX}" from="${smsFrom}"`);
 		}
 	} catch (e) {
-		console.log("Error Sending Email:", e.message);
+		logger.error(`Error sending email: ${e.message}`, { stack: e.stack });
 	}
 };
 
